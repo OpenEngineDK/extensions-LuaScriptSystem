@@ -35,10 +35,6 @@ using namespace std;
 using namespace OpenEngine::Core;
 using OpenEngine::Math::RandomGenerator;
 
-#ifndef stackcheck
-#define stackcheck false
-#endif
-
 class ScriptSystem {
 
  private:
@@ -84,7 +80,7 @@ class ScriptSystem {
  public:
   //super level functions e.a the backbone of the
   //scriptsystem
-  static bool CheckArgType(lua_State* L, string name, string type, int number, int index);
+  static bool CheckArgType(lua_State* L, string name, char type, int number, int index);
   static bool CheckStackSize(lua_State* L, string name, int count);
   static void InitScriptSystem(string path, Engine* engine);
   static void DeinitScriptSystem();

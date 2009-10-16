@@ -4,7 +4,7 @@
 ScriptITransitionMode::ScriptITransitionMode(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "ITransitionMode", 1) ||
-      ScriptSystem::CheckArgType(L, "ITransitionMode", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "ITransitionMode", 'p', 1, -1))
     return;
 
   trans = (ITransitionMode*) lua_touserdata(L, -1);
@@ -14,8 +14,8 @@ ScriptITransitionMode::ScriptITransitionMode(lua_State* L) {
 int ScriptITransitionMode::InitFade(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "InitFade", 3) ||
-      ScriptSystem::CheckArgType(L, "InitFade", "userdata", 1, -2) ||
-      ScriptSystem::CheckArgType(L, "InitFade", "userdata", 2, -1))
+      ScriptSystem::CheckArgType(L, "InitFade", 'p', 1, -2) ||
+      ScriptSystem::CheckArgType(L, "InitFade", 'p', 2, -1))
     return 0;
 
   if (!trans) {

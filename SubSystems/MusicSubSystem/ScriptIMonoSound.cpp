@@ -4,7 +4,7 @@
 ScriptIMonoSound::ScriptIMonoSound(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "IMonoSound", 1) ||
-      ScriptSystem::CheckArgType(L, "IMonoSound", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "IMonoSound", 'p', 1, -1))
     return;
 
   IMonoSound* s = (IMonoSound*) lua_touserdata(L, -1);
@@ -47,7 +47,7 @@ int ScriptIMonoSound::IsMonoSound(lua_State* L) {
 int ScriptIMonoSound::SetMaxDistance(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetMaxDistanc", 2) ||
-      ScriptSystem::CheckArgType(L, "SetMaxDistanc", "float", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetMaxDistanc", 'd', 1, -1))
     return 0;
 
   if (!sound) {
@@ -147,7 +147,7 @@ int ScriptIMonoSound::Pause(lua_State* L) {
 int ScriptIMonoSound::SetLooping(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetLooping", 2) ||
-      ScriptSystem::CheckArgType(L, "SetLooping", "bool", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetLooping", 'b', 1, -1))
     return 0;
 
   if (!sound) {
@@ -182,7 +182,7 @@ int ScriptIMonoSound::GetLooping(lua_State* L) {
 int ScriptIMonoSound::SetGain(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetGain", 2) ||
-      ScriptSystem::CheckArgType(L, "SetGain", "float", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetGain", 'd', 1, -1))
     return 0;
 
   if (!sound) {
@@ -251,7 +251,7 @@ int ScriptIMonoSound::GetLength(lua_State* L) {
 int ScriptIMonoSound::SetElapsedSamples(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetElapsedSamples", 2) ||
-      ScriptSystem::CheckArgType(L, "SetElapsedSamples", "int", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetElapsedSamples", 'i', 1, -1))
     return 0;
 
   if (!sound) {
@@ -286,7 +286,7 @@ int ScriptIMonoSound::GetElapsedSamples(lua_State* L) {
 int ScriptIMonoSound::SetElapsedTime(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetElapsedTime", 2) ||
-      ScriptSystem::CheckArgType(L, "SetElapsedTime", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetElapsedTime", 'p', 1, -1))
     return 0;
 
   if (!sound) {
@@ -321,7 +321,7 @@ int ScriptIMonoSound::GetElapsedTime(lua_State* L) {
 int ScriptIMonoSound::SetVelocity(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetVelocity", 2) ||
-      ScriptSystem::CheckArgType(L, "SetVelocity", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetVelocity", 'p', 1, -1))
     return 0;
 
   if (!sound) {
@@ -373,7 +373,7 @@ int ScriptIMonoSound::GetPosition(lua_State* L) {
 int ScriptIMonoSound::SetPosition(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetPosition", 2) ||
-      ScriptSystem::CheckArgType(L, "SetPosition", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetPosition", 'p', 1, -1))
     return 0;
 
   if (!sound) {
@@ -391,7 +391,7 @@ int ScriptIMonoSound::SetPosition(lua_State* L) {
 int ScriptIMonoSound::SetRelativePosition(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetRelativePosition", 2) ||
-      ScriptSystem::CheckArgType(L, "SetRelativePosition", "bool", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetRelativePosition", 'b', 1, -1))
     return 0;
 
   if (!sound) {

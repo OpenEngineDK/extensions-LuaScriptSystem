@@ -32,7 +32,7 @@ void ScriptSystem::ReportErrors(lua_State* L, int status)
   //and I know what I am doing :))
 
   if ( status != 0 ) {
-    logger.info << "-- " << lua_tostring(L, -1) << logger.end;
+    logger.info << "LuaScriptSystem: " << lua_tostring(L, -1) << logger.end;
     lua_pop(L, 1); // remove error message
   }
 }
@@ -295,8 +295,8 @@ int ScriptSystem::GetProcessAttacher(lua_State* L) {
 int ScriptSystem::Attach(lua_State* L) {
 
   //check the stack size and types
-  if (CheckStackSize(L, "Attach", 2) || CheckArgType(L, "Attach", "userdata", 1, -2)
-      || CheckArgType(L, "Attach", "userdata", 2, -1))
+  if (CheckStackSize(L, "Attach", 2) || CheckArgType(L, "Attach", 'p', 1, -2)
+      || CheckArgType(L, "Attach", 'p', 2, -1))
     return 0;
 
   IAttacher* a = (IAttacher*) lua_touserdata(L, -2);
@@ -317,10 +317,10 @@ int ScriptSystem::ListenOnEvent(lua_State* L) {
   //check size and types
   if (nargs >= 4) {
     //check top 4 arguments
-    if (CheckArgType(L, "ListenOnEvent", "userdata", 1, -4) 
-	|| CheckArgType(L, "ListenOnEvent", "string", 2, -3)
-	|| CheckArgType(L, "ListenOnEvent", "string", 3, -2)
-	|| CheckArgType(L, "ListenOnEvent", "string", 4, -1))
+    if (CheckArgType(L, "ListenOnEvent", 'p', 1, -4) 
+	|| CheckArgType(L, "ListenOnEvent", 's', 2, -3)
+	|| CheckArgType(L, "ListenOnEvent", 's', 3, -2)
+	|| CheckArgType(L, "ListenOnEvent", 's', 4, -1))
       return 0;
 
     //check if there are too many arguments on the stack and if so
@@ -334,9 +334,9 @@ int ScriptSystem::ListenOnEvent(lua_State* L) {
   }
   else if (nargs == 3) {
     //check that top 3 arguments are ok
-    if (CheckArgType(L, "ListenOnEvent", "userdata", 1, -3) 
-	|| CheckArgType(L, "ListenOnEvent", "string", 2, -2)
-	|| CheckArgType(L, "ListenOnEvent", "string", 3, -1))
+    if (CheckArgType(L, "ListenOnEvent", 'p', 1, -3) 
+	|| CheckArgType(L, "ListenOnEvent", 's', 2, -2)
+	|| CheckArgType(L, "ListenOnEvent", 's', 3, -1))
       return 0;
 
     //set index
@@ -353,8 +353,8 @@ int ScriptSystem::ListenOnEvent(lua_State* L) {
       return 0;
     }
     //check types
-    if (CheckArgType(L, "ListenOnEvent", "userdata", 1, -2) 
-	|| CheckArgType(L, "ListenOnEvent", "string", 2, -1))
+    if (CheckArgType(L, "ListenOnEvent", 'p', 1, -2) 
+	|| CheckArgType(L, "ListenOnEvent", 's', 2, -1))
       return 0;
     index = -2;
   }
@@ -390,8 +390,8 @@ int ScriptSystem::RunScript(lua_State* L) {
   if (nargs >= 2) {
 
     //check arguments
-    if (CheckArgType(L, "Runscript", "string", 1, -2) ||
-	CheckArgType(L, "Runscript", "string", 2, -1))
+    if (CheckArgType(L, "Runscript", 's', 1, -2) ||
+	CheckArgType(L, "Runscript", 's', 2, -1))
       return 0;
 
     if (nargs > 2)
@@ -407,7 +407,7 @@ int ScriptSystem::RunScript(lua_State* L) {
   else if (nargs == 1) {
 
     //check stack and size
-    if (CheckArgType(L, "Runscript", "string", 1, -1))
+    if (CheckArgType(L, "Runscript", 's', 1, -1))
       return 0;
 
     string name = lua_tostring(L, -1);
@@ -417,7 +417,8 @@ int ScriptSystem::RunScript(lua_State* L) {
   }
 
   //cleanup
-  lua_pop(L, nargs);
+  lua_settop(L, 0);
+
   return 0;
 
 }
@@ -425,13 +426,10 @@ int ScriptSystem::RunScript(lua_State* L) {
 int ScriptSystem::RunScriptFunc(lua_State* L) {
 
   //check args and types
-  if (CheckArgType(L, "RunScriptFunc", "string", 1, -3) ||
-      CheckArgType(L, "RunScriptFunc", "string", 2, -2) ||
-      CheckArgType(L, "RunScriptFunc", "int", 3, -1))
+  if (CheckArgType(L, "RunScriptFunc", 's', 1, -3) ||
+      CheckArgType(L, "RunScriptFunc", 's', 2, -2) ||
+      CheckArgType(L, "RunScriptFunc", 'i', 3, -1))
     return 0;
-  
-  if (stackcheck)
-    logger.info << "initial stack size in script Runfunc " << lua_gettop(L) << logger.end;
 
   string name = lua_tostring(L, -3);
   string funcname = lua_tostring(L, -2);
@@ -475,8 +473,13 @@ int ScriptSystem::RunScriptFunc(lua_State* L) {
   //call the function
   s = lua_pcall(L, lua_gettop(L) - 1, LUA_MULTRET, 0);
 
-  if (stackcheck)
-    logger.info << "final stacksize in script RunFunc " << lua_gettop(L) << logger.end;
+  //report errors and cancel call
+  ReportErrors(L, s);
+  if (s != 0) {
+	logger.info << "Call to " << funcname << " in " << path << " aborted" << logger.end;
+	lua_settop(L, 0);
+	return 0;
+  }
 
   return rvals;
 
@@ -494,29 +497,29 @@ int ScriptSystem::GetRandomInt(lua_State* L) {
 ScriptSystem::ScriptSystem() {
 }
 
-bool ScriptSystem::CheckArgType(lua_State* L, string name, string type, int number, int index) {
+bool ScriptSystem::CheckArgType(lua_State* L, string name, char type, int number, int index) {
 
-  if (!type.compare("userdata") && !lua_islightuserdata(L, index)) {
+  if (type == 'p' && !lua_islightuserdata(L, index)) {
     logger.info << "Function " << name << " wants some userdata as argument " 
 		<< number << ". Call aborted." << logger.end;
     return true;
   }
-  else if (!type.compare("string") && !lua_isstring(L, index)) {
+  else if (type == 's' && !lua_isstring(L, index)) {
     logger.info << "Function " << name << " wants a string as argument " 
 		<< number << ". Call aborted." << logger.end;
     return true;
   }
-  else if (!type.compare("bool") && !lua_isboolean(L, index)) {
+  else if (type == 'b' && !lua_isboolean(L, index)) {
     logger.info << "Function " << name << " wants a bool as argument " 
 		<< number << ". Call aborted." << logger.end;
     return true;
   }
-  else if (!type.compare("float") && !lua_isnumber(L, index)) {
+  else if (type == 'd' && !lua_isnumber(L, index)) {
     logger.info << "Function " << name << " wants a float/double as argument " 
 		<< number << ". Call aborted." << logger.end;
     return true;
   }
-  else if (!type.compare("int") && !lua_isnumber(L, index)) {
+  else if (type == 'i' && !lua_isnumber(L, index)) {
     logger.info << "Function " << name << " wants a integer as argument " 
 		<< number << ". Call aborted." << logger.end;
     return true;
@@ -619,8 +622,6 @@ void ScriptSystem::RunScript(string scriptname, string stackid) {
     WatchScript(scriptname);
   }
 
-  if (s != 0)
-    logger.info << "calling report error from runscript" << logger.end;
   ReportErrors(L, s);
 
 }
@@ -643,10 +644,7 @@ void ScriptSystem::RunScriptFunc(string scriptname,
     //get the stack
     L = GetStack("default");
   else
-    L = GetStack(stackid);  
-
-  if (stackcheck)
-    logger.info << "initial stack size in cpp RunFunc " << lua_gettop(L) << logger.end;
+    L = GetStack(stackid);
 
   //make the variable lenght list and initialize it.
   va_list vl;
@@ -783,25 +781,11 @@ void ScriptSystem::RunScriptFunc(string scriptname,
       }    
     }
 
-    if (stackcheck && s != 0)
-      logger.info << "final stack size in cpp RunFunc " << lua_gettop(L) << " and trv is: " << trv << logger.end;
-    //leave the error message
-    if (s != 0)
-      lua_pop(L, trv - 1);
-    else
-      lua_pop(L, trv);
-
-    //    if (lua_gettop(L) != 0)
-    //      logger.info << "something wrong here stack is " << lua_gettop(L) << logger.end;
+    ReportErrors(L, s);
+    lua_pop(L, trv - 1);
   }
 
   va_end(vl);
-  
-  /*  if (s != 0) {
-    logger.info << "calling check error from runscriptfunc" << logger.end;
-    logger.info << "scriptname is: " << scriptname << " and funcname:" << funcname << logger.end;
-    }*/
-  ReportErrors(L, s);
 
 }
 

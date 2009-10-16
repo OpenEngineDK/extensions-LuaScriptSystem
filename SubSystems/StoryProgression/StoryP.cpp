@@ -75,8 +75,8 @@ StoryP::StoryP(lua_State* L) {
 int StoryP::AddMileStone(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "AddMileStone", 3) ||
-      ScriptSystem::CheckArgType(L, "AddMileStone", "string", 1, -2) ||
-      ScriptSystem::CheckArgType(L, "AddMileStone", "userdata", 2, -1))
+      ScriptSystem::CheckArgType(L, "AddMileStone", 's', 1, -2) ||
+      ScriptSystem::CheckArgType(L, "AddMileStone", 'p', 2, -1))
     return 0;
 
   string name = lua_tostring(L, -2);
@@ -89,7 +89,7 @@ int StoryP::AddMileStone(lua_State* L) {
 int StoryP::DeleteMileStone(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "DeleteMileStone", 2) ||
-      ScriptSystem::CheckArgType(L, "DeleteMileStone", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "DeleteMileStone", 's', 1, -1))
     return 0;
 
   string name = lua_tostring(L, -1);
@@ -101,7 +101,7 @@ int StoryP::DeleteMileStone(lua_State* L) {
 int StoryP::GetMileStone(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "GetMileStone", 2) ||
-      ScriptSystem::CheckArgType(L, "GetMileStone", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "GetMileStone", 's', 1, -1))
     return 0;
 
   string name = lua_tostring(L, -1);
@@ -113,7 +113,7 @@ int StoryP::GetMileStone(lua_State* L) {
 int StoryP::IsReached(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "IsReached", 2) ||
-      ScriptSystem::CheckArgType(L, "IsReached", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "IsReached", 's', 1, -1))
     return 0;
 
   string name = lua_tostring(L, -1);
@@ -125,7 +125,7 @@ int StoryP::IsReached(lua_State* L) {
 int StoryP::GetData(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "GetData", 2) ||
-      ScriptSystem::CheckArgType(L, "GetData", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "GetData", 's', 1, -1))
     return 0;
 
   string name = lua_tostring(L, -1);
@@ -137,7 +137,7 @@ int StoryP::GetData(lua_State* L) {
 int StoryP::Mark(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "Mark", 2) ||
-      ScriptSystem::CheckArgType(L, "Mark", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "Mark", 's', 1, -1))
     return 0;
 
   string name = lua_tostring(L, -1);

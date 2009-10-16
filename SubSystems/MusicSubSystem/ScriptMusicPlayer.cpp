@@ -4,8 +4,8 @@
 ScriptMusicPlayer::ScriptMusicPlayer(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "MusicPlayer", 2) ||
-      ScriptSystem::CheckArgType(L, "MusicPlayer", "userdata", 1, -2) ||
-      ScriptSystem::CheckArgType(L, "MusicPlayer", "userdata", 2, -1))
+      ScriptSystem::CheckArgType(L, "MusicPlayer", 'p', 1, -2) ||
+      ScriptSystem::CheckArgType(L, "MusicPlayer", 'p', 2, -1))
     return;
 
   Camera* cam = (Camera*) lua_touserdata(L, -2);
@@ -18,7 +18,7 @@ ScriptMusicPlayer::ScriptMusicPlayer(lua_State* L) {
 int ScriptMusicPlayer::AddSound(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "MusicPlayer", 2) ||
-      ScriptSystem::CheckArgType(L, "MusicPlayer", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "MusicPlayer", 's', 1, -1))
     return 0;
 
   if (!player) {
@@ -65,7 +65,7 @@ int ScriptMusicPlayer::Next(lua_State* L) {
 int ScriptMusicPlayer::SwitchTo(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SwitchTo", 2) ||
-      ScriptSystem::CheckArgType(L, "SwitchTo", "int", 1, -1))
+      ScriptSystem::CheckArgType(L, "SwitchTo", 'i', 1, -1))
     return 0;
 
   if (!player) {
@@ -140,7 +140,7 @@ int ScriptMusicPlayer::Pause(lua_State* L) {
 int ScriptMusicPlayer::Shuffle(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "Shuffle", 2) ||
-      ScriptSystem::CheckArgType(L, "Shuffle", "bool", 1, -1))
+      ScriptSystem::CheckArgType(L, "Shuffle", 'b', 1, -1))
     return 0;
 
   if (!player) {
@@ -157,7 +157,7 @@ int ScriptMusicPlayer::Shuffle(lua_State* L) {
 int ScriptMusicPlayer::SetTransitionMode(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetTransitionMode", 2) ||
-      ScriptSystem::CheckArgType(L, "SetTransitionMode", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetTransitionMode", 'p', 1, -1))
     return 0;
 
   if (!player) {
@@ -174,7 +174,7 @@ int ScriptMusicPlayer::SetTransitionMode(lua_State* L) {
 int ScriptMusicPlayer::SetGain(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetGain", 2) ||
-      ScriptSystem::CheckArgType(L, "SetGain", "float", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetGain", 'd', 1, -1))
     return 0;
 
   if (!player) {

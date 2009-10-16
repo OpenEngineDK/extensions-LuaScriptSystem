@@ -62,7 +62,7 @@ int ScriptTimer::GetElapsedTimeAndReset(lua_State* L) {
 int ScriptTimer::GetElapsedIntervals(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "GetElapsedIntervals", 2) ||
-      ScriptSystem::CheckArgType(L, "GetElapsedIntervals", "int", 1, -1))
+      ScriptSystem::CheckArgType(L, "GetElapsedIntervals", 'i', 1, -1))
     return 0;
 
   int arg = lua_tointeger(L, -1);
@@ -75,7 +75,7 @@ int ScriptTimer::GetElapsedIntervals(lua_State* L) {
 int ScriptTimer::GetElapsedIntervalsAndReset(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "GetElapsedIntervalsAndReset", 2) ||
-      ScriptSystem::CheckArgType(L, "GetElapsedIntervalsAndReset", "int", 1, -1))
+      ScriptSystem::CheckArgType(L, "GetElapsedIntervalsAndReset", 'i', 1, -1))
     return 0;
 
   int arg = lua_tointeger(L, -1);

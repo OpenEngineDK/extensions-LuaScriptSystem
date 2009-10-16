@@ -4,7 +4,7 @@
 ScriptISoundSystem::ScriptISoundSystem(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "ISoundSystem", 1) || 
-      ScriptSystem::CheckArgType(L, "ISoundSystem", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "ISoundSystem", 'p', 1, -1))
     return;
 
   ISoundSystem* newsys = (ISoundSystem*) lua_touserdata(L, -1);
@@ -15,7 +15,7 @@ ScriptISoundSystem::ScriptISoundSystem(lua_State* L) {
 int ScriptISoundSystem::CreateSound(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "ISoundSystem", 2) || 
-      ScriptSystem::CheckArgType(L, "ISoundSystem", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "ISoundSystem", 's', 1, -1))
     return 0;
 
   if (!sys) {
@@ -36,7 +36,7 @@ int ScriptISoundSystem::CreateSound(lua_State* L) {
 int ScriptISoundSystem::SetRoot(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "ISoundSystem", 2) || 
-      ScriptSystem::CheckArgType(L, "ISoundSystem", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "ISoundSystem", 'p', 1, -1))
     return 0;
 
   if (!sys) {
@@ -54,7 +54,7 @@ int ScriptISoundSystem::SetRoot(lua_State* L) {
 int ScriptISoundSystem::SetMasterGain(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "ISoundSystem", 2) || 
-      ScriptSystem::CheckArgType(L, "ISoundSystem", "float", 1, -1))
+      ScriptSystem::CheckArgType(L, "ISoundSystem", 'd', 1, -1))
     return 0;
 
   if (!sys) {

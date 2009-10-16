@@ -8,7 +8,7 @@
 #include <Sound/OpenALSoundSystem.h>
 #include <Sound/ISound.h>
 #include <Scene/ISceneNode.h>
-#include <Display/FollowCamera.h>
+#include <Display/IViewingVolume.h>
 #include <Resources/ResourceManager.h>
 #include <Resources/ISoundResource.h>
 

@@ -4,8 +4,8 @@
 ScriptBruteTransitionMode::ScriptBruteTransitionMode(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "BruteTransitionMode", 2) ||
-      ScriptSystem::CheckArgType(L, "BruteTransitionMode", "userdata", 1, -2) ||
-      ScriptSystem::CheckArgType(L, "BruteTransitionMode", "userdata", 2, -1))
+      ScriptSystem::CheckArgType(L, "BruteTransitionMode", 'p', 1, -2) ||
+      ScriptSystem::CheckArgType(L, "BruteTransitionMode", 'p', 2, -1))
     return;
 
   Time* intime = (Time*) lua_touserdata(L, -2);
@@ -17,8 +17,8 @@ ScriptBruteTransitionMode::ScriptBruteTransitionMode(lua_State* L) {
 int ScriptBruteTransitionMode::InitFade(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "InitFade", 3) ||
-      ScriptSystem::CheckArgType(L, "InitFade", "userdata", 1, -2) ||
-      ScriptSystem::CheckArgType(L, "InitFade", "userdata", 2, -1))
+      ScriptSystem::CheckArgType(L, "InitFade", 'p', 1, -2) ||
+      ScriptSystem::CheckArgType(L, "InitFade", 'p', 2, -1))
     return 0;
 
   if (!trans) {

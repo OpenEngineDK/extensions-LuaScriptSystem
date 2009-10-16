@@ -83,7 +83,7 @@ int MileStone::GetData(lua_State* L) {
 int MileStone::SetData(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetData", 2) ||
-      ScriptSystem::CheckArgType(L, "SetData", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetData", 'p', 1, -1))
     return 0;
 
   data = lua_touserdata(L, -1);

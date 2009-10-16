@@ -4,7 +4,7 @@
 ScriptISound::ScriptISound(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "ISound", 1) || 
-      ScriptSystem::CheckArgType(L, "ISound", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "ISound", 'p', 1, -1))
     return;
 
   ISound* s = (ISound*) lua_touserdata(L, -1);
@@ -114,7 +114,7 @@ int ScriptISound::Pause(lua_State* L) {
 int ScriptISound::SetLooping(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetLooping", 2) || 
-      ScriptSystem::CheckArgType(L, "SetLooping", "bool", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetLooping", 'b', 1, -1))
     return 0;
 
   if (!sound) {
@@ -149,7 +149,7 @@ int ScriptISound::GetLooping(lua_State* L) {
 int ScriptISound::SetGain(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetGain", 2) || 
-      ScriptSystem::CheckArgType(L, "SetGain", "float", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetGain", 'd', 1, -1))
     return 0;
 
   if (!sound) {
@@ -218,7 +218,7 @@ int ScriptISound::GetLength(lua_State* L) {
 int ScriptISound::SetElapsedSamples(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetElapsedSamples", 2) || 
-      ScriptSystem::CheckArgType(L, "SetElapsedSamples", "int", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetElapsedSamples", 'i', 1, -1))
     return 0;
 
   if (!sound) {
@@ -253,7 +253,7 @@ int ScriptISound::GetElapsedSamples(lua_State* L) {
 int ScriptISound::SetElapsedTime(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "SetElapsedTime", 2) || 
-      ScriptSystem::CheckArgType(L, "SetElapsedTime", "userdata", 1, -1))
+      ScriptSystem::CheckArgType(L, "SetElapsedTime", 'p', 1, -1))
     return 0;
 
   if (!sound) {

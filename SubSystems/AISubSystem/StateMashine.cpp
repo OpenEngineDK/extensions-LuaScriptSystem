@@ -88,7 +88,7 @@ int StateMashine::AddState(lua_State* L) {
 int StateMashine::GotoState(lua_State* L) {
 
   if (ScriptSystem::CheckStackSize(L, "GotoState", 2) ||
-      ScriptSystem::CheckArgType(L, "GotoState", "string", 1, -1))
+      ScriptSystem::CheckArgType(L, "GotoState", 's', 1, -1))
     return 0;
 
   string name = lua_tostring(L, -1);

@@ -37,7 +37,7 @@ void ScriptKeyHandler::HandleUp(Key key) {
     case KEY_F4:
       //      ScriptSystem::RunScriptFunc("/home/jakob/Skrivebord/openengine/projects/test.lua", "Print", "", "", "");
       //      ScriptSystem::RunScriptFunc("test.lua", "Print", "", "", "");
-      ScriptSystem::RunScript("/home/oe/cpvc-tests/jakob/openengine/projects/test.lua");
+      ScriptSystem::RunScript("tests/test.lua");
       break;
     default:
       break;

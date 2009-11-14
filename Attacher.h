@@ -13,23 +13,18 @@ template <typename EventArg>
 class LuaListener;
 
 class IAttacher {
-
  public:
   virtual void Attach(void* lis) = 0;
   virtual ILuaListener* GetListener() = 0;
-
 };
 
 template <typename EventArg>
 class Attacher : IAttacher {
-
  private:
   IEvent<EventArg>& e;
 
  public:
-
- Attacher(IEvent<EventArg>& event): e(event) {
-  }
+ Attacher(IEvent<EventArg>& event): e(event) {}
 
   void Attach(void* lis) {
 
@@ -39,18 +34,14 @@ class Attacher : IAttacher {
   }
   
   ILuaListener* GetListener() {
-
-    LuaListener<EventArg>* lis = LuaListener<EventArg>::GetListener();
-    
-    if (lis->IsAttached()) {
-      return lis;
-    }
-    else {
+    LuaListener<EventArg>* lis =
+      LuaListener<EventArg>::GetListener();
+    static bool isAttached = false;
+    if (!isAttached) {
       Attach(lis);
-      lis->Mark();
-      return lis;
+      isAttached = true;
     }
-
+    return lis;
   }
   
 };

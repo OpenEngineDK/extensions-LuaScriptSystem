@@ -1,20 +1,25 @@
-
 #include "ScriptSystem.h"
+
 #include "LuaListener.h"
 #include "CPPToLuaBinder.h"
 
-//cpp magic
+using namespace OpenEngine;
+
+//initialize static class variables (cpp magic)
 string ScriptSystem::libpath;
 bool ScriptSystem::initialized;
 Engine* ScriptSystem::en;
-RandomGenerator ScriptSystem::randgen;
-map<string, lua_State*> ScriptSystem::stacks;
-map<string, bool> ScriptSystem::watchstatus;
 
 #ifdef _OnLinux_
 Inotify ScriptSystem::notify;
 #endif
 
+//CPVC: is this part of the scriptsystem?
+RandomGenerator ScriptSystem::randgen;
+map<string, lua_State*> ScriptSystem::stacks;
+map<string, bool> ScriptSystem::watchstatus;
+
+//CPVC: is this part of the scriptsystem?
 string Account::classname = "Account";
 CPPToLuaBinder<Account>::RegType Account::Register[] = {
      {"deposit",  &Account::deposit},
@@ -22,15 +27,9 @@ CPPToLuaBinder<Account>::RegType Account::Register[] = {
      {"balance",  &Account::balance}
 };
 
-//the functions
-//-------------------------------------------------------
-
-void ScriptSystem::ReportErrors(lua_State* L, int status)
-{
-
+void ScriptSystem::ReportErrors(lua_State* L, int status) {
   //should make sure system is initialized but it is private
   //and I know what I am doing :))
-
   if ( status != 0 ) {
     logger.info << "LuaScriptSystem: " << lua_tostring(L, -1) << logger.end;
     lua_pop(L, 1); // remove error message
@@ -38,11 +37,11 @@ void ScriptSystem::ReportErrors(lua_State* L, int status)
 }
 
 void ScriptSystem::RegistreCore(string stackid) {
-
   //  RegisterNonClassFunc("PrintPoint", PrintPoint);
   //  RegisterNonClassFunc("ChangePoint", ChangePoint);
   //  RegisterNonClassFunc("CreatePoint", CreatePoint);
   //  RegisterNonClassFunc("PrintString", PrintString);
+  //CPVC: should these functions be in the scribsystem???
   RegisterNonClassFunc("ActivateParticleSubSystem",
 		       ActivateParticleSubSystem, stackid);
   RegisterNonClassFunc("ActivateMusicSubSystem",
@@ -65,11 +64,10 @@ void ScriptSystem::RegistreCore(string stackid) {
   RegisterNonClassFunc("RunScript", RunScript, stackid);
   RegisterNonClassFunc("RunScriptFunc", RunScriptFunc, stackid);
   RegisterNonClassFunc("GetRandomInt", GetRandomInt, stackid);
-
 }
 
 string ScriptSystem::GetScriptName(string usergivenname) {
-
+  //CPVC???
   //should make sure system is initialized but it is private
   //and I know what I am doing :))
 
@@ -81,11 +79,9 @@ string ScriptSystem::GetScriptName(string usergivenname) {
   else
     //concat scriptname to standard library path
     return libpath + usergivenname;
-
 }
 
 bool ScriptSystem::CheckIfInit(string name) {
-
   //make sure system is initialized
   if (!initialized) {
     logger.info << "ScriptSystem not initialized. "
@@ -361,26 +357,26 @@ int ScriptSystem::ListenOnEvent(lua_State* L) {
  
   IAttacher* att = (IAttacher*) lua_touserdata(L, index);
   ILuaListener* lis = att->GetListener();
+  logger.info << "GetListener()" << logger.end;
 
   string scriptname = lua_tostring(L, index + 1);
 
   if (nargs >= 4) {
     string funcname = lua_tostring(L, index + 2);
     string stackid = lua_tostring(L, index + 3);
-    lis->AddScript(scriptname, funcname, stackid);    
+    lis->AddScript(stackid, scriptname, funcname);
   }
   else if (nargs == 3) {
     string funcname = lua_tostring(L, index + 2);
-    lis->AddScript(scriptname, funcname, "default");
+    lis->AddScript("default", scriptname, funcname);
   }
   else
-    lis->AddScript(scriptname, "default"); 
+    lis->AddScript("default", scriptname); 
 
   //take off the args - clean up
   lua_pop(L, nargs);
 
-  return 0;
-  
+  return 0;  
 }
 
 int ScriptSystem::RunScript(lua_State* L) {
@@ -485,6 +481,8 @@ int ScriptSystem::RunScriptFunc(lua_State* L) {
 
 }
 
+//CPVC: is this part of the scriptsystem?
+/*
 int ScriptSystem::GetRandomInt(lua_State* L) {
 
   int range = lua_tointeger(L, -1);
@@ -493,6 +491,7 @@ int ScriptSystem::GetRandomInt(lua_State* L) {
   return 1;
 
 }
+*/
 
 ScriptSystem::ScriptSystem() {
 }
@@ -526,11 +525,9 @@ bool ScriptSystem::CheckArgType(lua_State* L, string name, char type, int number
   }
 
   return false;
-
 }
 
 bool ScriptSystem::CheckStackSize(lua_State* L, string name, int count) {
-
   int stacksize = lua_gettop(L);
 
   //too few arguments so call has to be stopped
@@ -555,11 +552,9 @@ bool ScriptSystem::CheckStackSize(lua_State* L, string name, int count) {
   //arguments match so no problem
   else
     return false;
-  
 }
 
 void ScriptSystem::InitScriptSystem(string path, Engine* engine) {
-
   //set initialized
   initialized = true;
 
@@ -583,20 +578,14 @@ void ScriptSystem::InitScriptSystem(string path, Engine* engine) {
   //remember to make nonblocking
   notify.SetNonBlock(true);
   #endif
-
 }
 
 void ScriptSystem::DeinitScriptSystem() {
-  
-  map<string, lua_State*>::iterator it;
-
-  it = stacks.begin();
-
-  while (it != stacks.end()) { 
+  map<string, lua_State*>::iterator it = stacks.begin();
+  while (it != stacks.end()) {
     lua_close((*it).second);
     ++it;
   }
-
 };
 
 void ScriptSystem::RunScript(string scriptname, string stackid) {
@@ -626,16 +615,12 @@ void ScriptSystem::RunScript(string scriptname, string stackid) {
 
 }
 
-void ScriptSystem::RunScriptFunc(string scriptname, 
-				 string funcname,
-				 string stackid,
-				 string argtypes,
-				 string returntypes,				 
-				 ...) {
-
+void ScriptSystem::RunScriptFunc(string scriptname, string funcname,
+				 string stackid, string argtypes,
+				 string returntypes, ...) {
   //make sure system is initialized
   if (CheckIfInit("RunScriptFunc"))
-    return;
+    throw Core::Exception("RunScriptFunc not registered");
 
   //get the stack
   lua_State* L;
@@ -645,6 +630,10 @@ void ScriptSystem::RunScriptFunc(string scriptname,
     L = GetStack("default");
   else
     L = GetStack(stackid);
+
+  if (L == NULL)
+    throw Core::Exception("RunScriptFunc could not locate environment: "
+			  + stackid);
 
   //make the variable lenght list and initialize it.
   va_list vl;
@@ -656,7 +645,7 @@ void ScriptSystem::RunScriptFunc(string scriptname,
   //load the script and catch errors  
   int s = luaL_loadfile(L, path.c_str());
 
-  if (s==0) {
+  if (s == 0) {
     
     //try to find the function in question
     lua_getglobal(L, funcname.c_str());
@@ -677,6 +666,11 @@ void ScriptSystem::RunScriptFunc(string scriptname,
       WatchScript(scriptname);
 
     }
+    /*CPVC???
+      else
+        throw Core::Exception("RunScriptFunc could not load script file: "
+                              + scriptname);
+    */
 
     //get the arguments on the stack
     for (unsigned int i = 0; i < argtypes.length(); i++) {
@@ -684,18 +678,22 @@ void ScriptSystem::RunScriptFunc(string scriptname,
       
       case 'b': {
 	lua_pushboolean(L, va_arg(vl, int));
+	//CPVC: check for error
 	break;
       }
       case 'i': {
 	lua_pushinteger(L, va_arg(vl, int));
+	//CPVC: check for error
 	break;
       }
       case 'd': {
 	lua_pushnumber(L, va_arg(vl, double));
+	//CPVC: check for error
 	break;
       }
       case 's': {
 	lua_pushstring(L, va_arg(vl, char*));
+	//CPVC: check for error
 	break;
       }
       case 'u': {
@@ -703,23 +701,25 @@ void ScriptSystem::RunScriptFunc(string scriptname,
 	int size = va_arg(vl, int);
 	void* ldata = lua_newuserdata(L, size);
 	memcpy(ldata, data, size);
+	//CPVC: check for error
 	break;
       }
       case 'p': {
 	void* p = va_arg(vl, void*);
 	lua_pushlightuserdata(L, p);
+	//CPVC: check for error
 	break;
       }
       default:
-	logger.info << "unrecognized argument: " 
-		    << argtypes.at(i) << logger.end;
+	throw Core::Exception("unrecognized argument: " 
+			      + argtypes.at(i) );
 	break;
-
       }
     }
 
     //call the function
     s = lua_pcall(L, argtypes.length(), LUA_MULTRET, 0);
+    //CPVC: check for error
 
     unsigned int rrv = returntypes.length();
     unsigned int trv = lua_gettop(L);
@@ -727,6 +727,7 @@ void ScriptSystem::RunScriptFunc(string scriptname,
     //if returnvalues are requested make sure there
     //is enough
     if (rrv > trv)
+      //CPVC: throw Exception instead
       logger.info << rrv << " return values requested" 
 		  << ". Only " << trv 
 		  << " return values present"
@@ -743,21 +744,25 @@ void ScriptSystem::RunScriptFunc(string scriptname,
 	case 'b': {
 	  bool* bp = (bool*) va_arg(vl, int*);
 	  *bp = lua_toboolean(L, nextindex);
+	  //CPVC: check for error
 	  break;
 	}
 	case 'i': {
 	  int* ip = va_arg(vl, int*);
 	  *ip = lua_tointeger(L, nextindex);
+	  //CPVC: check for error
 	  break;
 	}
 	case 'd': {
 	  double* fp = va_arg(vl, double*);
 	  *fp = lua_tonumber(L, nextindex);
+	  //CPVC: check for error
 	  break;
 	}
 	case 's': {
 	  string* cp = (string*) va_arg(vl, char*);
 	  *cp = lua_tostring(L, nextindex);
+	  //CPVC: check for error
 	  break;
 	}
 	case 'u': {
@@ -765,16 +770,18 @@ void ScriptSystem::RunScriptFunc(string scriptname,
 	  int size = va_arg(vl, int);
 	  void* sour = lua_touserdata(L, nextindex);
 	  memcpy(dest, sour, size);
+	  //CPVC: check for error
 	  break;
 	}
 	case 'p': {
 	  void** p = va_arg(vl, void**);
 	  *p = lua_touserdata(L, nextindex);
+	  //CPVC: check for error
 	  break;
 	}
 	default:
-	  logger.info << "unrecognized argument: " 
-		      << returntypes.at(i) << logger.end;
+	  throw Core::Exception("unrecognized return type: " 
+				+ returntypes.at(i));
 	  break;
 	}  
 
@@ -786,20 +793,20 @@ void ScriptSystem::RunScriptFunc(string scriptname,
   }
 
   va_end(vl);
-
 }
 
-void ScriptSystem::GetGlobal(string scriptname, string name, char type, void* rval, string stackid) {
+void ScriptSystem::GetGlobal(string scriptname, string name, char type, 
+			     void* rval, string stackid) {
 
   lua_State* L = GetStack(stackid);
+  //CPVC: check for error
 
   lua_getglobal(L, name.c_str());
 
   //check that there is something on the stack and it is not nil
   //if this check fails it means the global could not be found so stop
   if (lua_gettop(L) != 1 || lua_isnil(L, -1)) {
-    logger.info << "Global " << name << " could not be found" << logger.end;
-    return;
+    throw Core::Exception("Global " + name + " could not be found");
   }
 
   switch (type) {
@@ -807,30 +814,35 @@ void ScriptSystem::GetGlobal(string scriptname, string name, char type, void* rv
   case 'b': {
     bool* bp = (bool*) rval;
     *bp = lua_toboolean(L, -1);
+    //CPVC: check for error
     break;
   }
   case 'i': {
     int* ip = (int*) rval;
     *ip = lua_tointeger(L, -1);
+    //CPVC: check for error
     break;
   } 
   case 'd': {
     double* dp = (double*) rval;
     *dp = lua_tonumber(L, -1);
+    //CPVC: check for error
     break;
   }
   case 's': {
     string* sp = (string*) rval;
     *sp = lua_tostring(L, -1);
+    //CPVC: check for error
     break;
   }
   case 'p': {
     void** p = (void**) rval;
     *p = lua_touserdata(L, -1);
+    //CPVC: check for error
     break;
   }
   default:
-    logger.info << "requested type is not available: " << type << logger.end;
+    throw Core::Exception("requested type is not available: " + type);
     break;
   }
 
@@ -838,20 +850,16 @@ void ScriptSystem::GetGlobal(string scriptname, string name, char type, void* rv
 }
 
 void ScriptSystem::ChangeScriptDir(string newpath) {
-
   if (CheckIfInit("ChangeScriptDir"))
-    return;
+    throw Core::Exception("Lua function: ChangeScriptDir, is not registered");
 
   libpath = newpath;
-
 }
 
 void ScriptSystem::RemoveStack(string name) {
-
   lua_State* L = GetStack(name);
   lua_close(L);
   stacks.erase(name);
-
 }
 
 void ScriptSystem::RemoveStack(lua_State* L) {
@@ -861,17 +869,9 @@ void ScriptSystem::RemoveStack(lua_State* L) {
 void ScriptSystem::RegisterNonClassFunc(string name, lua_CFunction func, string stackid) {
 
   if (CheckIfInit("RegisterNonClassFunc"))
-    return;
+    throw Core::Exception("Lua function: RegisterNonClassFunc, is not registered");
 
   //get the stack
   lua_State* L = GetStack(stackid);
-
   lua_register(L, name.c_str(), func);
-
 } 
-
-
-
-
-
-
